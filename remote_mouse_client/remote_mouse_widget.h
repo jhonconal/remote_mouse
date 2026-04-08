@@ -15,6 +15,7 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QIcon>
 
 // 触摸板区域自定义控件
 class TouchpadArea : public QWidget

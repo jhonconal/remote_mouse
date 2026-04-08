@@ -137,7 +137,7 @@ void RemoteMouseWidget::setupStatusBar()
     m_ipInput = new QLineEdit(controlWidget);
     m_ipInput->setPlaceholderText(tr("例如: 192.168.1.100"));
     m_ipInput->setText("127.0.0.1");
-    m_ipInput->setFixedWidth(150);
+    m_ipInput->setFixedWidth(120);
 
     // IP验证器
     QRegularExpression ipRegex("^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
@@ -146,7 +146,7 @@ void RemoteMouseWidget::setupStatusBar()
 
     // 连接/断开复用按钮
     m_toggleBtn = new QPushButton(tr("连接"), controlWidget);
-    m_toggleBtn->setFixedWidth(80);
+    m_toggleBtn->setFixedWidth(60);
     m_toggleBtn->setCursor(Qt::PointingHandCursor);
     connect(m_toggleBtn, &QPushButton::clicked, this, &RemoteMouseWidget::onToggleButtonClicked);
 
