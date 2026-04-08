@@ -34,6 +34,7 @@
 #include <signal.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
+#include <sys/select.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <linux/uinput.h>
@@ -323,9 +324,31 @@ int main(int argc, char *argv[]) {
 
     printf("[INFO] Server listening on port %d (screen %dx%d)\n", port, screen_w, screen_h);
 
-    // 支持多次连接
+    // 支持多次连接，使用 select 实现 accept 超时
+    printf("[INFO] Server ready, waiting for connections...\n");
     while (g_running) {
-        printf("[INFO] Waiting for client connection...\n");
+        // 使用 select 等待连接，设置 1 秒超时
+        fd_set readfds;
+        struct timeval timeout;
+        FD_ZERO(&readfds);
+        FD_SET(sockfd, &readfds);
+        timeout.tv_sec = 1;
+        timeout.tv_usec = 0;
+        
+        int ret = select(sockfd + 1, &readfds, NULL, NULL, &timeout);
+        if (ret < 0) {
+            if (errno == EINTR) {
+                // 被信号中断（如 Ctrl+C）
+                break;
+            }
+            perror("select");
+            continue;
+        } else if (ret == 0) {
+            // 超时，继续循环检查 g_running
+            continue;
+        }
+        
+        // 有连接请求
         int connfd = accept(sockfd, NULL, NULL);
         if (connfd < 0) {
             if (!g_running) break;
@@ -352,6 +375,27 @@ int main(int argc, char *argv[]) {
         int last_btn = 0;
 
         while (g_running) {
+            // 使用 select 等待客户端数据，设置 1 秒超时
+            fd_set readfds_conn;
+            struct timeval timeout_conn;
+            FD_ZERO(&readfds_conn);
+            FD_SET(connfd, &readfds_conn);
+            timeout_conn.tv_sec = 1;
+            timeout_conn.tv_usec = 0;
+            
+            int ret_conn = select(connfd + 1, &readfds_conn, NULL, NULL, &timeout_conn);
+            if (ret_conn < 0) {
+                if (errno == EINTR) {
+                    printf("[INFO] Connection select interrupted by signal\n");
+                    break;
+                }
+                perror("select on connection");
+                break;
+            } else if (ret_conn == 0) {
+                // 超时，继续循环检查 g_running
+                continue;
+            }
+            
             if (read_exact(connfd, frame, FRAME_SIZE) < 0) {
                 printf("[INFO] Client disconnected.\n");
                 break;
