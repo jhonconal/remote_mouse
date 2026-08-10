@@ -1,0 +1,36 @@
+# Build output executables
+remote_mouse_server
+remote_mouse_gui
+output/
+build/
+
+# Object files & intermediate files
+*.o
+*.obj
+*.a
+*.la
+*.lo
+
+# Qt generated files & caches
+Makefile*
+.qmake.stash
+moc_*.cpp
+moc_*.h
+moc_predefs.h
+qrc_*.cpp
+ui_*.h
+*.pro.user*
+
+# Qt Creator
+.qtcreator/
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+Thumbs.db

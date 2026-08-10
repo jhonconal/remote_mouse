@@ -62,10 +62,10 @@ gcc -o remote_mouse_server remote_mouse_server.c
 sudo ./remote_mouse_server
 
 # 或者手动指定分辨率
-sudo ./remote_mouse_server 1920 1080
+sudo ./remote_mouse_server -s 1920x1080
 
-# 或者指定端口
-sudo ./remote_mouse_server -p 8888 1920 1080
+# 或者指定端口与分辨率
+sudo ./remote_mouse_server -p 8888 -s 1280x720
 ```
 
 **注意**: 服务器需要 root 权限以访问 `/dev/uinput`
@@ -128,7 +128,7 @@ gcc -o remote_mouse_server remote_mouse_server.c
 sudo ./remote_mouse_server
 
 # 或者手动指定分辨率和端口
-sudo ./remote_mouse_server -p 9999 1920 1080
+sudo ./remote_mouse_server -p 9999 -s 1920x1080
 ```
 
 服务器启动后会:
@@ -172,17 +172,18 @@ sudo ./remote_mouse_server -p 9999 1920 1080
 ### 服务器端命令行参数
 
 ```bash
-./remote_mouse_server [-p port] [width height]
+./remote_mouse_server [-p port] [-s widthxheight] [-r rotation]
 
 参数:
-  -p port       TCP 监听端口 (默认: 9999)
-  width height  手动指定屏幕分辨率
-  -h, --help    显示帮助信息
+  -p port                 TCP 监听端口 (默认: 9999)
+  -s, -res, --resolution  手动指定屏幕分辨率 (如 -s 1920x1080 或 -s 1920 1080)
+  -r rotation             屏幕旋转角度 (0, 90, 180, 270)
+  -h, --help              显示帮助信息
 
 示例:
   ./remote_mouse_server                      # 自动检测分辨率
-  ./remote_mouse_server 1920 1080            # 手动指定 1920x1080
-  ./remote_mouse_server -p 8888 1280 720     # 端口 8888, 1280x720
+  ./remote_mouse_server -s 1920x1080         # 手动指定 1920x1080
+  ./remote_mouse_server -p 8888 -s 1280x720  # 端口 8888, 1280x720
 ```
 
 ## 🎨 界面预览
@@ -223,7 +224,7 @@ sudo ./remote_mouse_server -p 9999 1920 1080
 | 问题               | 解决方案                                       |
 | ---------------- | ------------------------------------------ |
 | 无法打开 /dev/uinput | 需要 root 权限或使用 `sudo`                       |
-| 分辨率检测失败          | 手动指定分辨率: `./remote_mouse_server 1920 1080` |
+| 分辨率检测失败          | 手动指定分辨率: `./remote_mouse_server -s 1920x1080` |
 | 端口已被占用           | 更换端口: `./remote_mouse_server -p 8888`      |
 | 客户端连接后立即断开       | 检查防火墙设置,确保端口可访问                            |
 
